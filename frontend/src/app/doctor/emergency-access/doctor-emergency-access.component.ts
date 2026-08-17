@@ -1,27 +1,30 @@
 import { Component } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ICONS } from '../../shared/icons';
 import { EmergencyApiService } from '../../core/services/emergency.service';
 import { EmergencyAccessResult } from '../../core/models/models';
 
 @Component({
   selector: 'app-doctor-emergency-access',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle" style="background:var(--critical-soft); color:var(--critical);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.siren | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow" style="color:var(--critical);">Doctor · Bypasses appointment access</span>
           <h1 style="color:var(--critical);">Emergency Access</h1>
         </div>
+        <img src="assets/illustrations/emergency.svg" alt="" width="80" height="65" style="margin-left:auto; width:80px; height:auto;" loading="lazy">
       </div>
 
       <div class="card emergency-card">
-        <p style="font-size:13px; color:#9A3412; margin-top:0;">
+        <p style="font-size:13px; color:#5c1a24; margin-top:0;">
           Returns critical, read-only data only. A reason is mandatory and every
           access is logged and later visible to the patient and admin.
         </p>
@@ -61,6 +64,7 @@ import { EmergencyAccessResult } from '../../core/models/models';
   `
 })
 export class DoctorEmergencyAccessComponent {
+  icons = ICONS;
   patientUid = '';
   reason = '';
   result: EmergencyAccessResult | null = null;

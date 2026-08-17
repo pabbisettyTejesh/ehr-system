@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorApiService } from '../../core/services/doctor.service';
+import { ICONS } from '../../shared/icons';
 
 @Component({
   selector: 'app-doctor-search-patient',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle bg-accent-doctor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.search | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Doctor · Limited visibility</span>
@@ -42,6 +44,7 @@ import { DoctorApiService } from '../../core/services/doctor.service';
   `
 })
 export class DoctorSearchPatientComponent {
+  icons = ICONS;
   patientUid = '';
   result: any = null;
   error = '';

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../../core/services/admin.service';
 import { AppUser } from '../../core/models/models';
@@ -6,12 +8,20 @@ import { AppUser } from '../../core/models/models';
 @Component({
   selector: 'app-admin-manage-users',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SafeHtmlPipe],
   template: `
     <div class="container">
-      <h1>Manage Users</h1>
+      <div class="page-header">
+        <span class="icon-circle bg-accent-admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.users | safeHtml"></svg>
+        </span>
+        <div>
+          <span class="page-eyebrow">Admin Portal</span>
+          <h1>Manage Users</h1>
+        </div>
+      </div>
       <div class="card">
-        <table>
+        <table *ngIf="users.length > 0">
           <thead><tr><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
           <tbody>
             <tr *ngFor="let u of users">
@@ -24,11 +34,16 @@ import { AppUser } from '../../core/models/models';
             </tr>
           </tbody>
         </table>
+        <div class="empty-state" *ngIf="users.length === 0">
+          <img src="assets/illustrations/empty-state.svg" alt="No users registered yet." loading="lazy">
+          <p>No users registered yet.</p>
+        </div>
       </div>
     </div>
   `
 })
 export class AdminManageUsersComponent implements OnInit {
+  icons = ICONS;
   users: AppUser[] = [];
   constructor(private api: AdminApiService) {}
   ngOnInit() { this.load(); }

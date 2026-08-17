@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ICONS } from '../../shared/icons';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SafeHtmlPipe],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
+  icons = ICONS;
   email = '';
   password = '';
   error = '';

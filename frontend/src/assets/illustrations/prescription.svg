@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img">
+  <title>Digital prescription with medicine pills</title>
+  <defs>
+    <linearGradient id="rxBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F0FDFA"/>
+      <stop offset="1" stop-color="#DBEAFE"/>
+    </linearGradient>
+    <filter id="rxShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#14B8A6" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="160" cy="130" rx="150" ry="110" fill="url(#rxBlob)"/>
+
+  <!-- prescription paper -->
+  <g filter="url(#rxShadow)">
+    <rect x="80" y="56" width="120" height="150" rx="10" fill="#FFFFFF"/>
+    <rect x="96" y="74" width="46" height="9" rx="4.5" fill="#2563EB"/>
+    <rect x="96" y="92" width="88" height="5" rx="2.5" fill="#DBEAFE"/>
+    <text x="96" y="122" font-family="Georgia, serif" font-size="26" fill="#8B5CF6" opacity="0.65">Rx</text>
+    <rect x="96" y="140" width="88" height="5" rx="2.5" fill="#DBEAFE"/>
+    <rect x="96" y="152" width="70" height="5" rx="2.5" fill="#DBEAFE"/>
+    <rect x="96" y="164" width="80" height="5" rx="2.5" fill="#DBEAFE"/>
+    <path d="M150 186c8-4 20-4 34 0" fill="none" stroke="#14B8A6" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- pill bottle -->
+  <g filter="url(#rxShadow)">
+    <rect x="212" y="120" width="52" height="70" rx="10" fill="#14B8A6"/>
+    <rect x="212" y="120" width="52" height="22" rx="10" fill="#0D9488"/>
+    <rect x="222" y="104" width="32" height="18" rx="4" fill="#DBEAFE"/>
+    <rect x="220" y="154" width="36" height="24" rx="4" fill="#FFFFFF"/>
+    <rect x="224" y="160" width="28" height="4" rx="2" fill="#14B8A6"/>
+    <rect x="224" y="168" width="20" height="4" rx="2" fill="#DBEAFE"/>
+  </g>
+
+  <!-- capsule -->
+  <g filter="url(#rxShadow)" transform="rotate(-25 246 210)">
+    <rect x="228" y="200" width="36" height="18" rx="9" fill="#8B5CF6"/>
+    <rect x="228" y="200" width="18" height="18" rx="9" fill="#DBEAFE"/>
+  </g>
+
+  <circle cx="66" cy="90" r="7" fill="#2563EB" opacity="0.4"/>
+  <circle cx="70" cy="200" r="6" fill="#8B5CF6" opacity="0.4"/>
+</svg>

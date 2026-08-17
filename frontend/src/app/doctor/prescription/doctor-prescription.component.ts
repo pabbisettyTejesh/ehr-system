@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorApiService } from '../../core/services/doctor.service';
@@ -7,17 +9,18 @@ import { PrescriptionItem, EncounterSummary } from '../../core/models/models';
 @Component({
   selector: 'app-doctor-prescription',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page wide">
       <div class="page-header">
         <span class="icon-circle bg-accent-doctor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="9" rx="2"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.pill | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Doctor · Appointed patients only</span>
           <h1>Create Prescription</h1>
         </div>
+        <img src="assets/illustrations/prescription.svg" alt="" style="margin-left:auto; width:80px; height:auto;" loading="lazy">
       </div>
 
       <div class="card">
@@ -57,6 +60,7 @@ import { PrescriptionItem, EncounterSummary } from '../../core/models/models';
   `
 })
 export class DoctorPrescriptionComponent implements OnInit {
+  icons = ICONS;
   encounters: EncounterSummary[] = [];
   selectedEncounter: EncounterSummary | null = null;
   encounterId: number | null = null;

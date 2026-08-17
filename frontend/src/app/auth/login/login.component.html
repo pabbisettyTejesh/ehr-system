@@ -1,7 +1,10 @@
 <div class="auth-wrap">
+  <div class="auth-illustration">
+    <img src="assets/illustrations/login-secure.svg" alt="Person securely signing in to the healthcare portal" width="420" height="380" loading="eager">
+  </div>
   <div class="auth-card card">
     <div class="auth-mark">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.activity | safeHtml"></svg>
     </div>
     <span class="page-eyebrow">EHR System</span>
     <h2>Sign in</h2>

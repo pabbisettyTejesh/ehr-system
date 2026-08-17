@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 220" role="img">
+  <title>No records found yet</title>
+  <defs>
+    <linearGradient id="esBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DBEAFE"/>
+      <stop offset="1" stop-color="#F0FDFA"/>
+    </linearGradient>
+    <filter id="esShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#2563EB" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="130" cy="120" rx="110" ry="82" fill="url(#esBlob)"/>
+
+  <g filter="url(#esShadow)">
+    <path d="M75 90h110l14 90H61z" fill="#FFFFFF"/>
+    <path d="M75 90h110l6 20H69z" fill="#DBEAFE"/>
+  </g>
+
+  <g stroke="#DBEAFE" stroke-width="6" stroke-linecap="round">
+    <line x1="90" y1="140" x2="170" y2="140"/>
+    <line x1="90" y1="156" x2="150" y2="156"/>
+  </g>
+
+  <circle cx="130" cy="150" r="3" fill="#8B5CF6" opacity="0.6"/>
+  <circle cx="60" cy="70" r="6" fill="#14B8A6" opacity="0.4"/>
+  <circle cx="200" cy="80" r="5" fill="#2563EB" opacity="0.4"/>
+</svg>

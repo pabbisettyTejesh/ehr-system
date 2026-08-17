@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img">
+  <title>Scheduling a medical appointment on a calendar</title>
+  <defs>
+    <linearGradient id="apBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DBEAFE"/>
+      <stop offset="1" stop-color="#F0FDFA"/>
+    </linearGradient>
+    <filter id="apShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#2563EB" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="160" cy="130" rx="150" ry="110" fill="url(#apBlob)"/>
+
+  <g filter="url(#apShadow)">
+    <rect x="80" y="60" width="160" height="140" rx="16" fill="#FFFFFF"/>
+    <rect x="80" y="60" width="160" height="40" rx="16" fill="#2563EB"/>
+    <rect x="80" y="84" width="160" height="16" fill="#2563EB"/>
+    <rect x="104" y="48" width="10" height="28" rx="5" fill="#1D4ED8"/>
+    <rect x="206" y="48" width="10" height="28" rx="5" fill="#1D4ED8"/>
+
+    <g fill="#DBEAFE">
+      <rect x="98" y="112" width="20" height="18" rx="4"/>
+      <rect x="126" y="112" width="20" height="18" rx="4"/>
+      <rect x="154" y="112" width="20" height="18" rx="4"/>
+      <rect x="182" y="112" width="20" height="18" rx="4"/>
+      <rect x="210" y="112" width="20" height="18" rx="4"/>
+      <rect x="98" y="140" width="20" height="18" rx="4"/>
+      <rect x="154" y="140" width="20" height="18" rx="4"/>
+      <rect x="210" y="140" width="20" height="18" rx="4"/>
+    </g>
+    <rect x="126" y="140" width="20" height="18" rx="4" fill="#14B8A6"/>
+    <rect x="182" y="140" width="20" height="18" rx="4" fill="#8B5CF6" opacity="0.7"/>
+    <g fill="#DBEAFE">
+      <rect x="98" y="168" width="20" height="18" rx="4"/>
+      <rect x="126" y="168" width="20" height="18" rx="4"/>
+      <rect x="154" y="168" width="20" height="18" rx="4"/>
+      <rect x="182" y="168" width="20" height="18" rx="4"/>
+      <rect x="210" y="168" width="20" height="18" rx="4"/>
+    </g>
+  </g>
+
+  <!-- clock badge -->
+  <g filter="url(#apShadow)">
+    <circle cx="248" cy="182" r="30" fill="#FFFFFF"/>
+    <circle cx="248" cy="182" r="22" fill="none" stroke="#14B8A6" stroke-width="4"/>
+    <path d="M248 168v14l10 8" fill="none" stroke="#14B8A6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <circle cx="56" cy="70" r="7" fill="#8B5CF6" opacity="0.45"/>
+  <circle cx="66" cy="200" r="6" fill="#2563EB" opacity="0.4"/>
+</svg>

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorApiService } from '../../core/services/doctor.service';
@@ -7,12 +9,12 @@ import { AppointedPatient, EncounterSummary } from '../../core/models/models';
 @Component({
   selector: 'app-doctor-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle bg-accent-doctor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h11l5 5v13H4z"/><path d="M15 3v5h5"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.scrollText | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Doctor · Appointed patients only</span>
@@ -64,6 +66,7 @@ import { AppointedPatient, EncounterSummary } from '../../core/models/models';
   `
 })
 export class DoctorReportsComponent implements OnInit {
+  icons = ICONS;
   myPatients: AppointedPatient[] = [];
   encounters: EncounterSummary[] = [];
   form: any = { patientId: null, encounterId: null, reportName: '', reportType: '', hospitalName: '' };

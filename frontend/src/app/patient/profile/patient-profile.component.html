@@ -1,5 +1,13 @@
 <div class="container" style="max-width: 600px;">
-  <h1>My Profile</h1>
+  <div class="page-header">
+        <span class="icon-circle bg-accent-patient">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userRound | safeHtml"></svg>
+        </span>
+        <div>
+          <span class="page-eyebrow">Patient Portal</span>
+          <h1>My Profile</h1>
+        </div>
+      </div>
   <div class="card" *ngIf="profile">
     <p><strong>Patient UID:</strong> <span class="uid">{{ profile.patientUid }}</span></p>
     <div class="form-group">
@@ -37,5 +45,8 @@
     <button class="btn" (click)="save()" [disabled]="saving">{{ saving ? 'Saving...' : 'Save Changes' }}</button>
     <p class="success-text" *ngIf="message">{{ message }}</p>
   </div>
-  <div class="card" *ngIf="!profile">Loading...</div>
+  <div class="card empty-state" *ngIf="!profile">
+    <img src="assets/illustrations/loading-state.svg" alt="" width="140" height="90" loading="eager">
+    <p>Loading your profile…</p>
+  </div>
 </div>

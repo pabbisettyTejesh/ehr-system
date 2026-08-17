@@ -9,9 +9,12 @@ import { Appointment } from '../../core/models/models';
   imports: [CommonModule],
   template: `
     <div class="container">
-      <h1>My Appointments</h1>
+      <div class="list-header">
+        <h1>My Appointments</h1>
+        <img src="assets/illustrations/appointment.svg" alt="" loading="lazy">
+      </div>
       <div class="card">
-        <table>
+        <table *ngIf="appointments.length > 0">
           <thead><tr><th>Date</th><th>Doctor ID</th><th>Reason</th><th>Status</th></tr></thead>
           <tbody>
             <tr *ngFor="let a of appointments">
@@ -22,7 +25,10 @@ import { Appointment } from '../../core/models/models';
             </tr>
           </tbody>
         </table>
-        <p *ngIf="appointments.length === 0">No appointments yet.</p>
+        <div class="empty-state" *ngIf="appointments.length === 0">
+          <img src="assets/illustrations/empty-state.svg" alt="No appointments found" loading="lazy">
+          <p>No appointments yet.</p>
+        </div>
       </div>
     </div>
   `

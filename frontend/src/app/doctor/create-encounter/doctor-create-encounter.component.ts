@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorApiService } from '../../core/services/doctor.service';
@@ -7,12 +9,12 @@ import { AppointedPatient } from '../../core/models/models';
 @Component({
   selector: 'app-doctor-create-encounter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle bg-accent-doctor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.clipboardList | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Doctor · Appointed patients only</span>
@@ -71,6 +73,7 @@ import { AppointedPatient } from '../../core/models/models';
   `
 })
 export class DoctorCreateEncounterComponent implements OnInit {
+  icons = ICONS;
   myPatients: AppointedPatient[] = [];
   selectedAppointment: AppointedPatient | null = null;
   form: any = { patientId: null, appointmentId: null, hospitalName: '', departmentName: '', visitType: 'NORMAL', chiefComplaint: '', summary: '' };

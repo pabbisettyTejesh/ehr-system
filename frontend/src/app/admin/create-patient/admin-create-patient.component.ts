@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from '../../core/services/admin.service';
@@ -6,10 +8,18 @@ import { AdminApiService } from '../../core/services/admin.service';
 @Component({
   selector: 'app-admin-create-patient',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container" style="max-width:560px;">
-      <h1>Create Patient</h1>
+      <div class="page-header">
+        <span class="icon-circle bg-accent-admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userPlus | safeHtml"></svg>
+        </span>
+        <div>
+          <span class="page-eyebrow">Admin Portal</span>
+          <h1>Create Patient</h1>
+        </div>
+      </div>
       <div class="card">
         <div class="grid-2">
           <div class="form-group"><label>Full Name</label><input [(ngModel)]="form.fullName" name="fullName"></div>
@@ -36,6 +46,7 @@ import { AdminApiService } from '../../core/services/admin.service';
   `
 })
 export class AdminCreatePatientComponent {
+  icons = ICONS;
   form: any = {
     fullName: '', email: '', password: '', phone: '', dateOfBirth: '', gender: 'Male',
     bloodGroup: '', city: '', address: '', emergencyContactName: '', emergencyContactPhone: ''

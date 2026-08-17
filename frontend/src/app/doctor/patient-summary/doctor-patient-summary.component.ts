@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DoctorApiService } from '../../core/services/doctor.service';
@@ -7,12 +9,12 @@ import { PatientProfile } from '../../core/models/models';
 @Component({
   selector: 'app-doctor-patient-summary',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle bg-accent-doctor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userRound | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Doctor · Full access</span>
@@ -39,6 +41,7 @@ import { PatientProfile } from '../../core/models/models';
   `
 })
 export class DoctorPatientSummaryComponent implements OnInit {
+  icons = ICONS;
   profile: PatientProfile | null = null;
   error = '';
 

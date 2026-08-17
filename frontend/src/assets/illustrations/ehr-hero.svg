@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" role="img">
+  <title>Doctor reviewing a patient's electronic health record on a tablet</title>
+  <defs>
+    <linearGradient id="heroBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DBEAFE"/>
+      <stop offset="1" stop-color="#EEF2FF"/>
+    </linearGradient>
+    <linearGradient id="heroCoat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <filter id="heroShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#2563EB" flood-opacity="0.18"/>
+    </filter>
+    <filter id="cardShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1E293B" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="260" cy="210" rx="230" ry="180" fill="url(#heroBlob)"/>
+  <circle cx="90" cy="90" r="10" fill="#8B5CF6" opacity="0.5"/>
+  <circle cx="450" cy="320" r="14" fill="#14B8A6" opacity="0.45"/>
+  <circle cx="430" cy="70" r="7" fill="#2563EB" opacity="0.5"/>
+
+  <!-- ground -->
+  <ellipse cx="255" cy="368" rx="150" ry="14" fill="#1E293B" opacity="0.06"/>
+
+  <!-- doctor figure -->
+  <g filter="url(#heroShadow)">
+    <rect x="185" y="150" width="120" height="170" rx="46" fill="url(#heroCoat)"/>
+    <rect x="215" y="150" width="60" height="130" rx="20" fill="#DBEAFE"/>
+    <circle cx="245" cy="112" r="42" fill="#FFFFFF"/>
+    <path d="M203 112a42 42 0 0 1 84 0v10h-84z" fill="#1E293B" opacity="0.85"/>
+    <rect x="233" y="150" width="24" height="18" fill="#FFFFFF"/>
+  </g>
+
+  <!-- stethoscope -->
+  <path d="M212 190c0 30 10 46 34 46s34-16 34-46" fill="none" stroke="#14B8A6" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="246" cy="238" r="9" fill="#14B8A6"/>
+
+  <!-- arm holding tablet -->
+  <path d="M290 205c26 6 44 24 50 46" fill="none" stroke="url(#heroCoat)" stroke-width="26" stroke-linecap="round"/>
+
+  <!-- tablet with health record -->
+  <g filter="url(#cardShadow)">
+    <rect x="300" y="222" width="130" height="96" rx="14" fill="#FFFFFF"/>
+    <rect x="300" y="222" width="130" height="96" rx="14" fill="none" stroke="#DBEAFE" stroke-width="2"/>
+    <rect x="316" y="238" width="60" height="8" rx="4" fill="#2563EB"/>
+    <rect x="316" y="252" width="98" height="6" rx="3" fill="#DBEAFE"/>
+    <rect x="316" y="264" width="80" height="6" rx="3" fill="#DBEAFE"/>
+    <polyline points="316,296 332,296 340,280 350,304 358,292 366,296 414,296" fill="none" stroke="#14B8A6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- floating record card -->
+  <g filter="url(#cardShadow)">
+    <rect x="70" y="150" width="108" height="72" rx="12" fill="#FFFFFF"/>
+    <circle cx="94" cy="176" r="12" fill="#8B5CF6" opacity="0.18"/>
+    <path d="M88 176a6 6 0 0 1 12 0v3a6 6 0 0 1 -12 0z" fill="#8B5CF6"/>
+    <rect x="114" y="170" width="52" height="6" rx="3" fill="#1E293B" opacity="0.7"/>
+    <rect x="114" y="182" width="36" height="5" rx="2.5" fill="#DBEAFE"/>
+    <rect x="86" y="198" width="80" height="5" rx="2.5" fill="#DBEAFE"/>
+  </g>
+
+  <!-- floating shield -->
+  <g filter="url(#cardShadow)">
+    <path d="M400 96c0-8 32-18 32-18s32 10 32 18c0 26-14 42-32 48-18-6-32-22-32-48z" fill="#FFFFFF"/>
+    <path d="M418 122l10 10 18-20" fill="none" stroke="#14B8A6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

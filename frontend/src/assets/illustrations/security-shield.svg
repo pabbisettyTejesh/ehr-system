@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" role="img">
+  <title>Encrypted medical data protected behind a security shield</title>
+  <defs>
+    <linearGradient id="secBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DBEAFE"/>
+      <stop offset="1" stop-color="#EDE9FE"/>
+    </linearGradient>
+    <linearGradient id="secShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <filter id="secShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#2563EB" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <circle cx="180" cy="160" r="140" fill="url(#secBlob)"/>
+
+  <!-- orbiting data dots -->
+  <g fill="#8B5CF6" opacity="0.55">
+    <circle cx="70" cy="90" r="6"/>
+    <circle cx="300" cy="110" r="5"/>
+    <circle cx="60" cy="220" r="5"/>
+    <circle cx="296" cy="230" r="7"/>
+  </g>
+  <g fill="none" stroke="#14B8A6" stroke-width="2" stroke-dasharray="4 8" opacity="0.6">
+    <circle cx="180" cy="160" r="110"/>
+  </g>
+
+  <!-- shield -->
+  <g filter="url(#secShadow)">
+    <path d="M180 60c0-10 68-30 68-30s68 20 68 30c0 62-30 104-68 118-38-14-68-56-68-118z" fill="url(#secShield)"/>
+    <path d="M180 60c0-10 68-30 68-30v148c-38-14-68-56-68-118z" fill="#FFFFFF" opacity="0.08"/>
+  </g>
+
+  <!-- lock -->
+  <rect x="222" y="150" width="52" height="42" rx="8" fill="#FFFFFF"/>
+  <path d="M232 150v-14a16 16 0 0 1 32 0v14" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="248" cy="169" r="6" fill="#2563EB"/>
+  <rect x="245" y="169" width="6" height="12" rx="3" fill="#2563EB"/>
+
+  <!-- record card behind shield -->
+  <rect x="70" y="200" width="120" height="80" rx="12" fill="#FFFFFF" filter="url(#secShadow)"/>
+  <rect x="86" y="216" width="60" height="7" rx="3.5" fill="#2563EB"/>
+  <rect x="86" y="232" width="88" height="5" rx="2.5" fill="#DBEAFE"/>
+  <rect x="86" y="244" width="70" height="5" rx="2.5" fill="#DBEAFE"/>
+  <path d="M86 262h20l6-14 8 24 6-16 4 8h24" fill="none" stroke="#14B8A6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

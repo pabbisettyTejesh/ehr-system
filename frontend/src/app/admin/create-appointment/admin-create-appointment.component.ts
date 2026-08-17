@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from '../../core/services/admin.service';
@@ -7,17 +9,18 @@ import { PatientListItem, DoctorListItem } from '../../core/models/models';
 @Component({
   selector: 'app-admin-create-appointment',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle bg-accent-admin">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v4M10 16h4"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.calendarPlus | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Admin · Access link</span>
           <h1>Create Appointment</h1>
         </div>
+        <img src="assets/illustrations/appointment.svg" alt="" style="margin-left:auto; width:80px; height:auto;" loading="lazy">
       </div>
 
       <div class="card">
@@ -68,6 +71,7 @@ import { PatientListItem, DoctorListItem } from '../../core/models/models';
   `
 })
 export class AdminCreateAppointmentComponent implements OnInit {
+  icons = ICONS;
   form: any = { patientId: null, doctorId: null, appointmentDate: '', reason: '', accessValidDays: 30 };
   patients: PatientListItem[] = [];
   doctors: DoctorListItem[] = [];

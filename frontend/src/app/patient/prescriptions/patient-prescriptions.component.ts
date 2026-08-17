@@ -9,10 +9,13 @@ import { Prescription } from '../../core/models/models';
   imports: [CommonModule],
   template: `
     <div class="container">
-      <h1>My Prescriptions</h1>
+      <div class="list-header">
+        <h1>My Prescriptions</h1>
+        <img src="assets/illustrations/prescription.svg" alt="" loading="lazy">
+      </div>
       <div class="card" *ngFor="let p of prescriptions">
         <div style="display:flex; justify-content:space-between;">
-          <span style="font-size:12px;color:#6b7280;">{{ p.createdAt | date:'medium' }}</span>
+          <span style="font-size:12px;color:var(--ink-soft);">{{ p.createdAt | date:'medium' }}</span>
           <span class="badge active">{{ p.status }}</span>
         </div>
         <table style="margin-top:8px;">
@@ -27,7 +30,10 @@ import { Prescription } from '../../core/models/models';
           </tbody>
         </table>
       </div>
-      <p *ngIf="prescriptions.length === 0">No prescriptions yet.</p>
+      <div class="card empty-state" *ngIf="prescriptions.length === 0">
+        <img src="assets/illustrations/empty-state.svg" alt="No prescriptions found" loading="lazy">
+        <p>No prescriptions yet.</p>
+      </div>
     </div>
   `
 })

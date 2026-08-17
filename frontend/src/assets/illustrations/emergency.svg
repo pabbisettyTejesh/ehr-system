@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img">
+  <title>Emergency healthcare access illustration</title>
+  <defs>
+    <linearGradient id="emBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDECEC"/>
+      <stop offset="1" stop-color="#DBEAFE"/>
+    </linearGradient>
+    <filter id="emShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#DC2626" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="160" cy="130" rx="150" ry="110" fill="url(#emBlob)"/>
+
+  <!-- pulsing ring -->
+  <circle cx="160" cy="130" r="70" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="5 9" opacity="0.5"/>
+
+  <!-- shield with cross -->
+  <g filter="url(#emShadow)">
+    <path d="M160 60c0-9 54-24 54-24s54 15 54 24c0 50-24 82-54 94-30-12-54-44-54-94z" fill="#FFFFFF"/>
+    <path d="M160 60c0-9 54-24 54-24v118c-30-12-54-44-54-94z" fill="#DC2626" opacity="0.06"/>
+    <rect x="200" y="88" width="28" height="72" rx="6" fill="#DC2626"/>
+    <rect x="180" y="108" width="68" height="28" rx="6" fill="#DC2626"/>
+  </g>
+
+  <!-- heartbeat line -->
+  <polyline points="60,190 90,190 100,166 114,206 126,178 136,190 168,190" fill="none" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#emShadow)"/>
+
+  <!-- alert badge -->
+  <g filter="url(#emShadow)">
+    <circle cx="252" cy="196" r="26" fill="#FFFFFF"/>
+    <rect x="249" y="182" width="6" height="20" rx="3" fill="#DC2626"/>
+    <circle cx="252" cy="209" r="3.4" fill="#DC2626"/>
+  </g>
+
+  <circle cx="58" cy="90" r="6" fill="#8B5CF6" opacity="0.45"/>
+  <circle cx="70" cy="220" r="7" fill="#14B8A6" opacity="0.4"/>
+</svg>

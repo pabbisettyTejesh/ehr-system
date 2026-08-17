@@ -1,21 +1,88 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { ICONS } from '../../shared/icons';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { CareRailComponent, RailItem } from '../../shared/care-rail/care-rail.component';
+import { AdminApiService } from '../../core/services/admin.service';
+import { DoctorProfile, Appointment, AccessLog, EmergencyAccessLog } from '../../core/models/models';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink, SafeHtmlPipe, CareRailComponent],
   template: `
     <div class="container">
-      <span class="page-eyebrow">Admin portal</span>
-      <h1>System overview</h1>
-      <p style="color:var(--ink-soft); margin-bottom:28px;">Approvals, access links, and audit visibility.</p>
+      <div class="dash-hero">
+        <div>
+          <span class="page-eyebrow">Admin portal</span>
+          <h1>System overview</h1>
+          <p style="color:var(--ink-soft);">Approvals, access links, and audit visibility.</p>
+        </div>
+        <img src="assets/illustrations/admin-dashboard.svg" alt="Healthcare administration control center with analytics and access control" width="420" height="300" loading="eager">
+      </div>
 
-      <div class="dash-grid">
+      <div class="stat-row" *ngIf="loaded">
+        <div class="stat-tile">
+          <div class="stat-top">
+            <span class="stat-label">Pending approvals</span>
+            <span class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userCheck | safeHtml"></svg></span>
+          </div>
+          <div class="stat-num">{{ pendingDoctors.length }}</div>
+          <div class="stat-sub">doctors awaiting review</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-top">
+            <span class="stat-label">Appointments</span>
+            <span class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.listChecks | safeHtml"></svg></span>
+          </div>
+          <div class="stat-num">{{ activeAppointmentCount }}</div>
+          <div class="stat-sub">active / scheduled</div>
+        </div>
+        <div class="stat-tile" [class.critical]="emergencyLogs.length > 0">
+          <div class="stat-top">
+            <span class="stat-label">Emergency pulls</span>
+            <span class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.siren | safeHtml"></svg></span>
+          </div>
+          <div class="stat-num">{{ emergencyLogs.length }}</div>
+          <div class="stat-sub">all time</div>
+        </div>
+      </div>
+
+      <div class="dash-split">
+        <div>
+          <div class="panel-title"><h3>Care Rail</h3><span class="mono">system activity</span></div>
+          <app-care-rail [items]="railItems"></app-care-rail>
+        </div>
+        <div>
+          <div class="panel-title"><h3>Quick actions</h3></div>
+          <div class="qa-list">
+            <a class="qa-item" routerLink="/admin/pending-doctors">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userCheck | safeHtml"></svg>
+              Review pending doctors
+            </a>
+            <a class="qa-item" routerLink="/admin/create-appointment">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.calendarPlus | safeHtml"></svg>
+              Create appointment
+            </a>
+            <a class="qa-item" routerLink="/admin/manage-users">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.users | safeHtml"></svg>
+              Manage users
+            </a>
+          </div>
+          <div class="mini-emergency">
+            <strong>Emergency access, audited</strong>
+            <p>Every emergency pull is reason-logged here and cross-visible to the patient's own access log.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid" style="margin-top:28px;">
         <a class="card" routerLink="/admin/pending-doctors">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userCheck | safeHtml"></svg>
             </span>
             Pending Doctor Approvals
           </h3>
@@ -25,7 +92,7 @@ import { RouterLink } from '@angular/router';
         <a class="card" routerLink="/admin/create-patient">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userPlus | safeHtml"></svg>
             </span>
             Create Patient
           </h3>
@@ -35,7 +102,7 @@ import { RouterLink } from '@angular/router';
         <a class="card" routerLink="/admin/create-appointment">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v4M10 16h4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.calendarPlus | safeHtml"></svg>
             </span>
             Create Appointment
           </h3>
@@ -45,7 +112,7 @@ import { RouterLink } from '@angular/router';
         <a class="card" routerLink="/admin/manage-appointments">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2 2 4-4"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.listChecks | safeHtml"></svg>
             </span>
             Manage Appointments
           </h3>
@@ -55,7 +122,7 @@ import { RouterLink } from '@angular/router';
         <a class="card" routerLink="/admin/manage-users">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/><path d="m17 8 2 2 3-3" stroke="var(--admin)"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.users | safeHtml"></svg>
             </span>
             Manage Users
           </h3>
@@ -65,7 +132,7 @@ import { RouterLink } from '@angular/router';
         <a class="card" routerLink="/admin/access-logs">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.shieldCheck | safeHtml"></svg>
             </span>
             Access Logs
           </h3>
@@ -75,7 +142,7 @@ import { RouterLink } from '@angular/router';
         <a class="card" routerLink="/admin/emergency-logs">
           <h3>
             <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.siren | safeHtml"></svg>
             </span>
             Emergency Logs
           </h3>
@@ -85,4 +152,49 @@ import { RouterLink } from '@angular/router';
     </div>
   `
 })
-export class AdminDashboardComponent {}
+export class AdminDashboardComponent implements OnInit {
+  icons = ICONS;
+  loaded = false;
+  pendingDoctors: DoctorProfile[] = [];
+  activeAppointmentCount = 0;
+  emergencyLogs: EmergencyAccessLog[] = [];
+  railItems: RailItem[] = [];
+
+  constructor(private api: AdminApiService) {}
+
+  ngOnInit() {
+    forkJoin({
+      pendingDoctors: this.api.getPendingDoctors(),
+      appointments: this.api.getAllAppointments(),
+      accessLogs: this.api.getAccessLogs(),
+      emergencyLogs: this.api.getEmergencyLogs()
+    }).subscribe(({ pendingDoctors, appointments, accessLogs, emergencyLogs }) => {
+      this.pendingDoctors = pendingDoctors;
+      this.emergencyLogs = emergencyLogs;
+      this.activeAppointmentCount = appointments.filter(a => a.status === 'SCHEDULED' || a.status === 'ACTIVE').length;
+      this.railItems = this.buildRail(accessLogs, emergencyLogs);
+      this.loaded = true;
+    });
+  }
+
+  private buildRail(accessLogs: AccessLog[], emergencyLogs: EmergencyAccessLog[]): RailItem[] {
+    const items: RailItem[] = [];
+    for (const l of accessLogs) {
+      items.push({
+        date: l.timestamp, type: 'access', tagLabel: 'Access log',
+        title: `${l.action} · patient #${l.patientId}`,
+        detail: `${l.accessMode} · user #${l.userId}`
+      });
+    }
+    for (const e of emergencyLogs) {
+      items.push({
+        date: e.viewedAt, type: 'allergy', tagLabel: 'Emergency access',
+        title: `Emergency pull · patient #${e.patientId}`,
+        detail: e.reason
+      });
+    }
+    return items
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 8);
+  }
+}

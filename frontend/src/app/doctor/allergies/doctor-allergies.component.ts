@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorApiService } from '../../core/services/doctor.service';
@@ -7,12 +9,12 @@ import { AppointedPatient } from '../../core/models/models';
 @Component({
   selector: 'app-doctor-allergies',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SafeHtmlPipe],
   template: `
     <div class="container form-page">
       <div class="page-header">
         <span class="icon-circle bg-accent-doctor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.triangleAlert | safeHtml"></svg>
         </span>
         <div>
           <span class="page-eyebrow">Doctor · Appointed patients only</span>
@@ -64,6 +66,7 @@ import { AppointedPatient } from '../../core/models/models';
   `
 })
 export class DoctorAllergiesComponent implements OnInit {
+  icons = ICONS;
   myPatients: AppointedPatient[] = [];
   form: any = { patientId: null, allergenName: '', severity: 'LOW', reaction: '', notes: '' };
   saved = false;

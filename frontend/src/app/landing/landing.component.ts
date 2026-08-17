@@ -4,11 +4,12 @@ import { ICONS } from '../shared/icons';
 import { AuroraBackgroundComponent } from '../shared/aurora-background/aurora-background.component';
 import { ParticleNetworkComponent } from '../shared/particle-network/particle-network.component';
 import { RevealDirective } from '../shared/directives/reveal.directive';
+import { SafeHtmlPipe } from '../shared/safe-html.pipe';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, AuroraBackgroundComponent, ParticleNetworkComponent, RevealDirective],
+  imports: [RouterLink, AuroraBackgroundComponent, ParticleNetworkComponent, RevealDirective, SafeHtmlPipe],
   templateUrl: './landing.component.html'
 })
 export class LandingComponent {

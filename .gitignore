@@ -1,0 +1,13 @@
+# Backend
+backend/target/
+backend/*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/*.log
+
+.DS_Store
+.vercel
+.env*

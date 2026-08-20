@@ -2,6 +2,7 @@ package com.ehr.backend.service;
 
 import com.ehr.backend.dto.request.CreateAppointmentRequest;
 import com.ehr.backend.dto.request.CreatePatientByAdminRequest;
+import com.ehr.backend.dto.request.ApproveAppointmentRequest;
 import com.ehr.backend.dto.response.AuthResponse;
 import com.ehr.backend.entity.*;
 import com.ehr.backend.enums.*;
@@ -134,6 +135,36 @@ public class AdminService {
 
     public List<Appointment> getAllAppointments() {
         return appointmentRepository.findAll();
+    }
+    
+    public List<Appointment> getPendingAppointments() {
+        return appointmentRepository.findAll().stream()
+                .filter(a -> a.getStatus() == AppointmentStatus.REQUESTED)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Transactional
+    public Appointment approveAppointmentRequest(Long appointmentId, ApproveAppointmentRequest req) {
+        Appointment appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        if (appt.getStatus() != AppointmentStatus.REQUESTED) {
+            throw new BadRequestException("Appointment is not in REQUESTED status");
+        }
+        appt.setStatus(AppointmentStatus.SCHEDULED); // Or ACTIVE based on your flow
+        appt.setAccessStartTime(req.getAccessStartTime());
+        appt.setAccessEndTime(req.getAccessEndTime());
+        return appointmentRepository.save(appt);
+    }
+
+    @Transactional
+    public Appointment rejectAppointmentRequest(Long appointmentId) {
+        Appointment appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        if (appt.getStatus() != AppointmentStatus.REQUESTED) {
+            throw new BadRequestException("Appointment is not in REQUESTED status");
+        }
+        appt.setStatus(AppointmentStatus.CANCELLED);
+        return appointmentRepository.save(appt);
     }
 
     @Transactional

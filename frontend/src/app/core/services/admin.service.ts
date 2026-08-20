@@ -16,6 +16,9 @@ export class AdminApiService {
   deactivateUser(id: number) { return this.api.put<M.AppUser>(`/admin/users/${id}/deactivate`); }
   createAppointment(body: any) { return this.api.post<M.Appointment>('/admin/appointments', body); }
   getAllAppointments() { return this.api.get<M.Appointment[]>('/admin/appointments'); }
+  getPendingAppointments() { return this.api.get<M.Appointment[]>('/admin/appointments/pending'); }
+  approveAppointment(id: number, body: any) { return this.api.put<M.Appointment>(`/admin/appointments/${id}/approve`, body); }
+  rejectAppointment(id: number) { return this.api.put<M.Appointment>(`/admin/appointments/${id}/reject`); }
   cancelAppointment(id: number) { return this.api.put<M.Appointment>(`/admin/appointments/${id}/cancel`); }
   getAccessLogs() { return this.api.get<M.AccessLog[]>('/admin/access-logs'); }
   getEmergencyLogs() { return this.api.get<M.EmergencyAccessLog[]>('/admin/emergency-logs'); }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthResponse } from '../models/models';
 import { environment } from '../../../environments/environment';
+import { ToastService } from './toast.service';
 
 const STORAGE_KEY = 'ehr_auth';
 
@@ -10,7 +11,7 @@ const STORAGE_KEY = 'ehr_auth';
 export class AuthService {
   currentAuth = signal<AuthResponse | null>(this.loadFromStorage());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toast: ToastService) {}
 
   private loadFromStorage(): AuthResponse | null {
     const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -28,20 +29,30 @@ export class AuthService {
 
   registerPatient(payload: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register/patient`, payload)
-      .pipe(tap(res => { if (res.token) this.persist(res); }));
+      .pipe(tap(res => { 
+        if (res.token) {
+          this.persist(res);
+          this.toast.showSuccess('Patient registered successfully!');
+        }
+      }));
   }
 
   registerDoctor(payload: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register/doctor`, payload);
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register/doctor`, payload)
+      .pipe(tap(() => this.toast.showSuccess('Registration submitted. Waiting for admin approval.')));
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password })
-      .pipe(tap(res => this.persist(res)));
+      .pipe(tap(res => {
+        this.persist(res);
+        this.toast.showSuccess(`Welcome back! Logged in as ${res.role}`);
+      }));
   }
 
   logout() {
     this.persist(null);
+    this.toast.showInfo('You have been logged out.');
   }
 
   get token(): string | null {

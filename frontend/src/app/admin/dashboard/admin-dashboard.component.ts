@@ -7,11 +7,12 @@ import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { CareRailComponent, RailItem } from '../../shared/care-rail/care-rail.component';
 import { AdminApiService } from '../../core/services/admin.service';
 import { DoctorProfile, Appointment, AccessLog, EmergencyAccessLog } from '../../core/models/models';
+import { SkeletonComponent } from '../../shared/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, SafeHtmlPipe, CareRailComponent],
+  imports: [CommonModule, RouterLink, SafeHtmlPipe, CareRailComponent, SkeletonComponent],
   template: `
     <div class="container">
       <div class="dash-hero">
@@ -21,6 +22,13 @@ import { DoctorProfile, Appointment, AccessLog, EmergencyAccessLog } from '../..
           <p style="color:var(--ink-soft);">Approvals, access links, and audit visibility.</p>
         </div>
         <img src="assets/illustrations/admin-dashboard.svg" alt="Healthcare administration control center with analytics and access control" width="420" height="300" loading="eager">
+      </div>
+
+      <!-- Skeleton Loading for Stats -->
+      <div class="stat-row" *ngIf="!loaded">
+        <div class="stat-tile" *ngFor="let i of [1,2,3]" style="padding: 0; border: none; background: transparent;">
+          <app-skeleton type="card" height="136px" style="width: 100%;"></app-skeleton>
+        </div>
       </div>
 
       <div class="stat-row" *ngIf="loaded">
@@ -78,76 +86,71 @@ import { DoctorProfile, Appointment, AccessLog, EmergencyAccessLog } from '../..
         </div>
       </div>
 
-      <div class="dash-grid" style="margin-top:28px;">
-        <a class="card" routerLink="/admin/pending-doctors">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userCheck | safeHtml"></svg>
-            </span>
-            Pending Doctor Approvals
-          </h3>
-          <p>Approve or reject new doctors</p>
-        </a>
+      <div class="dash-split" style="margin-top: 28px;">
+        <!-- System Analytics -->
+        <div class="card" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--accent-admin);" [innerHTML]="icons.activity | safeHtml"></svg>
+              System Analytics Overview
+            </h3>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <span style="display: block; font-size: 28px; font-weight: 600; color: var(--ink);">{{ pendingDoctors.length }}</span>
+                <span style="font-size: 13px; color: var(--ink-soft);">Pending Verifications</span>
+              </div>
+              <div style="width: 64px; height: 64px; border-radius: 50%; background: conic-gradient(var(--accent-admin) 0% 25%, var(--line) 25% 100%); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 44px; height: 44px; background: var(--bg); border-radius: 50%;"></div>
+              </div>
+            </div>
+            <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); display: flex; flex-direction: column; justify-content: center;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+                <span style="color: var(--ink-soft);">Appointments</span>
+                <strong>{{ activeAppointmentCount }} Total</strong>
+              </div>
+              <div style="height: 12px; display: flex; width: 100%; border-radius: 6px; overflow: hidden; background: var(--line);">
+                <div style="width: 70%; background: var(--accent-admin);" title="Active"></div>
+                <div style="width: 30%; background: var(--gold-soft);" title="Scheduled"></div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 16px; border-radius: 8px; background: var(--bg-soft); border: 1px solid var(--line);">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px;">Platform Health</h4>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+              <span>Database Status</span><span style="color: var(--success); font-weight: 500;">Healthy</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+              <span>Video Calling (Zoom API)</span><span style="color: var(--success); font-weight: 500;">Operational</span>
+            </div>
+          </div>
+        </div>
 
-        <a class="card" routerLink="/admin/create-patient">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userPlus | safeHtml"></svg>
-            </span>
-            Create Patient
-          </h3>
-          <p>Register a patient on their behalf</p>
-        </a>
-
-        <a class="card" routerLink="/admin/create-appointment">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.calendarPlus | safeHtml"></svg>
-            </span>
-            Create Appointment
-          </h3>
-          <p>Link a doctor to a patient</p>
-        </a>
-
-        <a class="card" routerLink="/admin/manage-appointments">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.listChecks | safeHtml"></svg>
-            </span>
-            Manage Appointments
-          </h3>
-          <p>View and cancel appointments</p>
-        </a>
-
-        <a class="card" routerLink="/admin/manage-users">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.users | safeHtml"></svg>
-            </span>
-            Manage Users
-          </h3>
-          <p>Deactivate accounts</p>
-        </a>
-
-        <a class="card" routerLink="/admin/access-logs">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.shieldCheck | safeHtml"></svg>
-            </span>
-            Access Logs
-          </h3>
-          <p>All system access activity</p>
-        </a>
-
-        <a class="card" routerLink="/admin/emergency-logs">
-          <h3>
-            <span class="icon-circle bg-accent-admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.siren | safeHtml"></svg>
-            </span>
-            Emergency Logs
-          </h3>
-          <p>All emergency access records</p>
-        </a>
+        <!-- Security Alerts Feed -->
+        <div class="card" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--critical);" [innerHTML]="icons.shieldAlert | safeHtml"></svg>
+              Security & Emergency Alerts
+            </h3>
+            <a routerLink="/admin/emergency-logs" class="btn secondary" style="padding: 4px 8px; font-size: 12px;">View All</a>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div *ngFor="let e of emergencyLogs.slice(0,3)" style="padding: 12px; border-radius: 8px; border-left: 3px solid var(--critical); background: var(--bg-soft); display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="font-size: 14px; color: var(--critical);">Emergency Access Triggered</strong>
+                <span style="font-size: 12px; color: var(--ink-soft);">{{ e.viewedAt | date:'short' }}</span>
+              </div>
+              <span style="font-size: 13px;">Patient ID: #{{ e.patientId }} by Doctor ID: #{{ e.doctorId }}</span>
+              <p style="margin: 4px 0 0; font-size: 13px; color: var(--ink-soft); font-style: italic;">"{{ e.reason }}"</p>
+            </div>
+            
+            <p *ngIf="emergencyLogs.length === 0" style="color: var(--ink-soft); font-size: 14px; text-align: center; padding: 24px 0;">No security alerts detected.</p>
+          </div>
+        </div>
       </div>
     </div>
   `

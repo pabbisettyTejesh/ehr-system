@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -17,6 +18,7 @@ import { PatientReportsComponent } from './patient/reports/patient-reports.compo
 import { PatientAccessLogsComponent } from './patient/access-logs/patient-access-logs.component';
 
 import { DoctorDashboardComponent } from './doctor/dashboard/doctor-dashboard.component';
+import { DoctorProfileComponent } from './doctor/profile/doctor-profile.component';
 import { DoctorPatientsComponent } from './doctor/patients/doctor-patients.component';
 import { DoctorSearchPatientComponent } from './doctor/search-patient/doctor-search-patient.component';
 import { DoctorPatientSummaryComponent } from './doctor/patient-summary/doctor-patient-summary.component';
@@ -54,6 +56,7 @@ export const routes: Routes = [
 
   // Doctor
   { path: 'doctor/dashboard', component: DoctorDashboardComponent, canActivate: [roleGuard('DOCTOR')] },
+  { path: 'doctor/profile', component: DoctorProfileComponent, canActivate: [roleGuard('DOCTOR')] },
   { path: 'doctor/patients', component: DoctorPatientsComponent, canActivate: [roleGuard('DOCTOR')] },
   { path: 'doctor/search-patient', component: DoctorSearchPatientComponent, canActivate: [roleGuard('DOCTOR')] },
   { path: 'doctor/patient-summary/:patientId', component: DoctorPatientSummaryComponent, canActivate: [roleGuard('DOCTOR')] },
@@ -74,5 +77,5 @@ export const routes: Routes = [
   { path: 'admin/access-logs', component: AdminAccessLogsComponent, canActivate: [roleGuard('ADMIN')] },
   { path: 'admin/emergency-logs', component: AdminEmergencyLogsComponent, canActivate: [roleGuard('ADMIN')] },
 
-  { path: '**', redirectTo: 'login' }
+  { path: '**', component: NotFoundComponent }
 ];

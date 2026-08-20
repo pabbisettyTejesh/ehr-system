@@ -1,8 +1,12 @@
 package com.ehr.backend.service;
 
+import com.ehr.backend.dto.request.PatientRequestAppointmentRequest;
 import com.ehr.backend.dto.request.UpdatePatientProfileRequest;
+import com.ehr.backend.dto.response.DoctorListItemResponse;
 import com.ehr.backend.entity.*;
 import com.ehr.backend.enums.AccessMode;
+import com.ehr.backend.enums.AppointmentStatus;
+import com.ehr.backend.enums.ApprovalStatus;
 import com.ehr.backend.exception.ResourceNotFoundException;
 import com.ehr.backend.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ public class PatientService {
     private final ReportRepository reportRepository;
     private final AccessLogRepository accessLogRepository;
     private final EmergencyAccessLogRepository emergencyAccessLogRepository;
+    private final DoctorProfileRepository doctorProfileRepository;
 
     public PatientProfile getProfileByUserId(Long userId) {
         return patientProfileRepository.findByUserId(userId)
@@ -76,5 +81,34 @@ public class PatientService {
 
     public List<EmergencyAccessLog> getMyEmergencyLogs(Long patientProfileId) {
         return emergencyAccessLogRepository.findByPatientId(patientProfileId);
+    }
+
+    public List<DoctorListItemResponse> getActiveDoctors() {
+        return doctorProfileRepository.findByApprovalStatus(ApprovalStatus.ACTIVE).stream()
+                .map(d -> new DoctorListItemResponse(
+                        d.getId(), d.getFullName(), d.getSpecialization(), 
+                        d.getDefaultHospitalName(), d.getApprovalStatus().name()
+                ))
+                .toList();
+    }
+
+    @Transactional
+    public Appointment requestAppointment(Long patientProfileId, Long patientUserId, PatientRequestAppointmentRequest req) {
+        DoctorProfile doctor = doctorProfileRepository.findById(req.getDoctorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+                
+        if (doctor.getApprovalStatus() != ApprovalStatus.ACTIVE) {
+            throw new IllegalArgumentException("Cannot book appointment with an inactive doctor");
+        }
+
+        Appointment appt = new Appointment();
+        appt.setPatientId(patientProfileId);
+        appt.setDoctorId(doctor.getId());
+        appt.setCreatedByUserId(patientUserId);
+        appt.setAppointmentDate(req.getRequestedDate());
+        appt.setReason(req.getReason());
+        appt.setStatus(AppointmentStatus.REQUESTED);
+        
+        return appointmentRepository.save(appt);
     }
 }

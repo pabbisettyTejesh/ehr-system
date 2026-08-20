@@ -15,4 +15,5 @@ public class AppointedPatientResponse {
     private String status;
     private LocalDateTime appointmentDate;
     private LocalDateTime accessEndTime;
+    private String meetingLink;
 }

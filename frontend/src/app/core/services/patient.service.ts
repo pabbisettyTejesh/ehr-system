@@ -10,6 +10,8 @@ export class PatientApiService {
   getProfile() { return this.api.get<M.PatientProfile>('/patient/profile'); }
   updateProfile(body: any) { return this.api.put<M.PatientProfile>('/patient/profile', body); }
   getAppointments() { return this.api.get<M.Appointment[]>('/patient/appointments'); }
+  getActiveDoctors() { return this.api.get<M.DoctorListItem[]>('/patient/doctors/active'); }
+  requestAppointment(body: any) { return this.api.post<M.Appointment>('/patient/appointments/request', body); }
   getMedicalHistory() { return this.api.get<M.MedicalRecord[]>('/patient/medical-history'); }
   getPrescriptions() { return this.api.get<M.Prescription[]>('/patient/prescriptions'); }
   getAllergies() { return this.api.get<M.Allergy[]>('/patient/allergies'); }

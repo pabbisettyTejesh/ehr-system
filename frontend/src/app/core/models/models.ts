@@ -47,9 +47,10 @@ export interface Appointment {
   doctorId: number;
   appointmentDate: string;
   reason: string;
-  status: 'SCHEDULED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+  status: 'SCHEDULED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED' | 'REQUESTED';
   accessStartTime: string;
   accessEndTime: string;
+  meetingLink?: string;
 }
 
 export interface Encounter {
@@ -159,6 +160,7 @@ export interface AppointedPatient {
   status: string;
   appointmentDate: string;
   accessEndTime: string;
+  meetingLink?: string;
 }
 
 export interface EncounterSummary {
@@ -170,6 +172,15 @@ export interface EncounterSummary {
   visitDate: string;
   visitType: string;
   chiefComplaint: string;
+}
+
+export interface PatientFullDataResponse {
+  profile: PatientProfile;
+  encounters: Encounter[];
+  medicalRecords: MedicalRecord[];
+  prescriptions: Prescription[];
+  allergies: Allergy[];
+  reports: ReportItem[];
 }
 
 export interface PatientListItem {

@@ -6,7 +6,6 @@ import java.util.List;
 
 @Data
 public class CreatePrescriptionRequest {
-    private Long encounterId;
     private Long patientId;
     private List<PrescriptionItemDto> items;
 

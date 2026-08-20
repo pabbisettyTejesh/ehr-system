@@ -4,11 +4,13 @@ import { ICONS } from '../../shared/icons';
 import { CommonModule } from '@angular/common';
 import { PatientApiService } from '../../core/services/patient.service';
 import { ReportItem } from '../../core/models/models';
+import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../shared/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-patient-reports',
   standalone: true,
-  imports: [CommonModule, SafeHtmlPipe],
+  imports: [CommonModule, SafeHtmlPipe, EmptyStateComponent, SkeletonComponent],
   template: `
     <div class="container">
       <div class="page-header">
@@ -21,7 +23,13 @@ import { ReportItem } from '../../core/models/models';
         </div>
       </div>
       <div class="card">
-        <table *ngIf="reports.length > 0">
+        
+        <!-- Skeleton Loading -->
+        <div *ngIf="loading" style="padding: 24px;">
+          <app-skeleton type="row" height="60px" *ngFor="let i of [1,2,3]"></app-skeleton>
+        </div>
+
+        <table *ngIf="!loading && reports.length > 0">
           <thead><tr><th>Report Name</th><th>Type</th><th>Hospital</th><th>Uploaded</th></tr></thead>
           <tbody>
             <tr *ngFor="let r of reports">
@@ -32,10 +40,13 @@ import { ReportItem } from '../../core/models/models';
             </tr>
           </tbody>
         </table>
-        <div class="empty-state" *ngIf="reports.length === 0">
-          <img src="assets/illustrations/empty-state.svg" alt="No reports uploaded yet." loading="lazy">
-          <p>No reports uploaded yet.</p>
-        </div>
+        <app-empty-state 
+          *ngIf="!loading && reports.length === 0" 
+          iconName="scrollText" 
+          title="No Reports" 
+          message="No reports uploaded yet." 
+          theme="patient">
+        </app-empty-state>
       </div>
     </div>
   `
@@ -43,6 +54,12 @@ import { ReportItem } from '../../core/models/models';
 export class PatientReportsComponent implements OnInit {
   icons = ICONS;
   reports: ReportItem[] = [];
+  loading = true;
   constructor(private api: PatientApiService) {}
-  ngOnInit() { this.api.getReports().subscribe(r => this.reports = r); }
+  ngOnInit() { 
+    this.api.getReports().subscribe(r => {
+      this.reports = r;
+      this.loading = false;
+    }); 
+  }
 }

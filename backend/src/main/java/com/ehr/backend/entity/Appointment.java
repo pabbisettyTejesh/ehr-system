@@ -36,6 +36,9 @@ public class Appointment {
 
     private LocalDateTime accessStartTime;
     private LocalDateTime accessEndTime;
+    
+    @Column(length = 500)
+    private String meetingLink;
 
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();

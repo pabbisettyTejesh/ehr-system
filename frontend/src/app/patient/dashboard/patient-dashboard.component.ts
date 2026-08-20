@@ -7,6 +7,7 @@ import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { CareRailComponent, RailItem, RailEventType } from '../../shared/care-rail/care-rail.component';
 import { PatientApiService } from '../../core/services/patient.service';
 import { Appointment, MedicalRecord, Prescription, Allergy, ReportItem, AccessLog } from '../../core/models/models';
+import { SkeletonComponent } from '../../shared/skeleton/skeleton.component';
 
 const TAG_LABEL: Record<RailEventType, string> = {
   encounter: 'Encounter', prescription: 'Prescription', report: 'Report', allergy: 'Allergy', access: 'Access log'
@@ -15,7 +16,7 @@ const TAG_LABEL: Record<RailEventType, string> = {
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, SafeHtmlPipe, CareRailComponent],
+  imports: [CommonModule, RouterLink, SafeHtmlPipe, CareRailComponent, SkeletonComponent],
   template: `
     <div class="container">
       <div class="dash-hero">
@@ -25,6 +26,13 @@ const TAG_LABEL: Record<RailEventType, string> = {
           <p style="color:var(--ink-soft);">Your unified health record, all in one place.</p>
         </div>
         <img src="assets/illustrations/patient-dashboard.svg" alt="Patient viewing their personal health record on a phone" width="420" height="300" loading="eager">
+      </div>
+
+      <!-- Skeleton Loading for Stats -->
+      <div class="stat-row" *ngIf="!loaded">
+        <div class="stat-tile" *ngFor="let i of [1,2,3,4]" style="padding: 0; border: none; background: transparent;">
+          <app-skeleton type="card" height="136px" style="width: 100%;"></app-skeleton>
+        </div>
       </div>
 
       <div class="stat-row" *ngIf="loaded">
@@ -90,76 +98,38 @@ const TAG_LABEL: Record<RailEventType, string> = {
         </div>
       </div>
 
-      <div class="dash-grid" style="margin-top:28px;">
-        <a class="card" routerLink="/patient/profile">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.userRound | safeHtml"></svg>
-            </span>
-            My Profile
-          </h3>
-          <p>View and update your basic info</p>
-        </a>
-
-        <a class="card" routerLink="/patient/appointments">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.calendar | safeHtml"></svg>
-            </span>
-            Appointments
-          </h3>
-          <p>See scheduled doctor appointments</p>
-        </a>
-
-        <a class="card" routerLink="/patient/medical-history">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.fileText | safeHtml"></svg>
-            </span>
-            Medical History
-          </h3>
-          <p>Timeline of diagnoses & clinical notes</p>
-        </a>
-
-        <a class="card" routerLink="/patient/prescriptions">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.pill | safeHtml"></svg>
-            </span>
-            Prescriptions
-          </h3>
-          <p>Current & past medicines</p>
-        </a>
-
-        <a class="card" routerLink="/patient/allergies">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.triangleAlert | safeHtml"></svg>
-            </span>
-            Allergies
-          </h3>
-          <p>Known allergies & severity</p>
-        </a>
-
-        <a class="card" routerLink="/patient/reports">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.scrollText | safeHtml"></svg>
-            </span>
-            Reports
-          </h3>
-          <p>Lab & medical report metadata</p>
-        </a>
-
-        <a class="card" routerLink="/patient/access-logs">
-          <h3>
-            <span class="icon-circle bg-accent-patient">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="icons.shieldCheck | safeHtml"></svg>
-            </span>
-            Access & Emergency Logs
-          </h3>
-          <p>Who accessed your data, and when</p>
-        </a>
+      <div class="dash-split" style="margin-top: 28px;">
+        <!-- Next Appointment Countdown / Info -->
+        <div class="card" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--accent-patient);" [innerHTML]="icons.calendar | safeHtml"></svg>
+              Next Upcoming Appointment
+            </h3>
+          </div>
+          
+          <div *ngIf="nextVisit" style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <strong style="display: block; font-size: 16px; margin-bottom: 4px;">{{ nextVisit.appointmentDate | date:'fullDate' }}</strong>
+                <span style="font-size: 14px; color: var(--ink-soft); display: block; margin-bottom: 4px;">{{ nextVisit.appointmentDate | date:'shortTime' }}</span>
+                <span class="badge" style="background: var(--bg-soft);">Reason: {{ nextVisit.reason }}</span>
+              </div>
+              <div style="text-align: right;">
+                <p style="margin: 0 0 8px 0; font-size: 13px; color: var(--ink-soft);">Status: {{ nextVisit.status }}</p>
+                <a *ngIf="nextVisit.meetingLink" [href]="nextVisit.meetingLink" target="_blank" class="btn primary" style="padding: 6px 16px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;" [innerHTML]="icons.video | safeHtml"></svg>
+                  Join Call
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="!nextVisit" style="text-align: center; padding: 32px 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: var(--line); margin-bottom: 12px;" [innerHTML]="icons.calendar | safeHtml"></svg>
+            <p style="color: var(--ink-soft); font-size: 15px; margin: 0;">You have no upcoming appointments.</p>
+          </div>
+        </div>
       </div>
     </div>
   `

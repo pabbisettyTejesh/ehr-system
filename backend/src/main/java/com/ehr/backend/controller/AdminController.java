@@ -2,6 +2,7 @@ package com.ehr.backend.controller;
 
 import com.ehr.backend.dto.request.CreateAppointmentRequest;
 import com.ehr.backend.dto.request.CreatePatientByAdminRequest;
+import com.ehr.backend.dto.request.ApproveAppointmentRequest;
 import com.ehr.backend.dto.response.MessageResponse;
 import com.ehr.backend.security.CurrentUserService;
 import com.ehr.backend.service.AdminService;
@@ -65,6 +66,21 @@ public class AdminController {
     @GetMapping("/appointments")
     public ResponseEntity<?> getAllAppointments() {
         return ResponseEntity.ok(adminService.getAllAppointments());
+    }
+
+    @GetMapping("/appointments/pending")
+    public ResponseEntity<?> getPendingAppointments() {
+        return ResponseEntity.ok(adminService.getPendingAppointments());
+    }
+
+    @PutMapping("/appointments/{appointmentId}/approve")
+    public ResponseEntity<?> approveAppointmentRequest(@PathVariable Long appointmentId, @RequestBody ApproveAppointmentRequest req) {
+        return ResponseEntity.ok(adminService.approveAppointmentRequest(appointmentId, req));
+    }
+
+    @PutMapping("/appointments/{appointmentId}/reject")
+    public ResponseEntity<?> rejectAppointmentRequest(@PathVariable Long appointmentId) {
+        return ResponseEntity.ok(adminService.rejectAppointmentRequest(appointmentId));
     }
 
     @PutMapping("/appointments/{appointmentId}/cancel")

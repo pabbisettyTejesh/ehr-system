@@ -19,6 +19,7 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true)
     private Long encounterId;
 
     @Column(nullable = false)

@@ -71,7 +71,8 @@ public class DoctorService {
                     a.getId(), a.getPatientId(),
                     p != null ? p.getPatientUid() : null,
                     p != null ? p.getFullName() : "Unknown",
-                    a.getStatus().name(), a.getAppointmentDate(), a.getAccessEndTime()
+                    a.getStatus().name(), a.getAppointmentDate(), a.getAccessEndTime(),
+                    a.getMeetingLink()
             ));
         }
         return result;
@@ -108,6 +109,23 @@ public class DoctorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
 
+    public com.ehr.backend.dto.response.PatientFullDataResponse getPatientFullData(Long doctorProfileId, Long patientId) {
+        assertHasFullAccess(doctorProfileId, patientId);
+        
+        PatientProfile profile = patientProfileRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+                
+        List<Encounter> encounters = encounterRepository.findByPatientId(patientId);
+        List<MedicalRecord> medicalRecords = medicalRecordRepository.findByPatientId(patientId);
+        List<Prescription> prescriptions = prescriptionRepository.findByPatientId(patientId);
+        List<Allergy> allergies = allergyRepository.findByPatientId(patientId);
+        List<Report> reports = reportRepository.findByPatientId(patientId);
+        
+        return new com.ehr.backend.dto.response.PatientFullDataResponse(
+                profile, encounters, medicalRecords, prescriptions, allergies, reports
+        );
+    }
+
     @Transactional
     public Encounter createEncounter(Long doctorProfileId, CreateEncounterRequest req) {
         assertHasFullAccess(doctorProfileId, req.getPatientId());
@@ -133,18 +151,33 @@ public class DoctorService {
         return encounterRepository.findByDoctorId(doctorProfileId);
     }
 
+    private Long getOrCreateTodayEncounter(Long patientId, Long doctorId) {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        List<Encounter> patientEncounters = encounterRepository.findByPatientId(patientId);
+        
+        for (Encounter e : patientEncounters) {
+            if (e.getDoctorId().equals(doctorId) && e.getVisitDate().toLocalDate().equals(today)) {
+                return e.getId();
+            }
+        }
+
+        Encounter newEncounter = new Encounter();
+        newEncounter.setPatientId(patientId);
+        newEncounter.setDoctorId(doctorId);
+        newEncounter.setVisitDate(java.time.LocalDateTime.now());
+        newEncounter.setVisitType(com.ehr.backend.enums.VisitType.NORMAL);
+        newEncounter.setHospitalName("Auto-Generated Session");
+        newEncounter.setChiefComplaint("Clinical Session");
+        newEncounter = encounterRepository.save(newEncounter);
+        return newEncounter.getId();
+    }
+
     @Transactional
     public MedicalRecord addMedicalRecord(Long doctorProfileId, CreateMedicalRecordRequest req) {
         assertHasFullAccess(doctorProfileId, req.getPatientId());
 
-        Encounter encounter = encounterRepository.findById(req.getEncounterId())
-                .orElseThrow(() -> new ResourceNotFoundException("Encounter not found"));
-        if (!encounter.getDoctorId().equals(doctorProfileId)) {
-            throw new AccessDeniedCustomException("Encounter does not belong to this doctor");
-        }
-
         MedicalRecord mr = new MedicalRecord();
-        mr.setEncounterId(req.getEncounterId());
+        mr.setEncounterId(getOrCreateTodayEncounter(req.getPatientId(), doctorProfileId));
         mr.setPatientId(req.getPatientId());
         mr.setDoctorId(doctorProfileId);
         mr.setDiagnosis(req.getDiagnosis());
@@ -165,7 +198,7 @@ public class DoctorService {
                 .findByPatientIdAndStatus(req.getPatientId(), AllergyStatus.ACTIVE);
 
         Prescription p = new Prescription();
-        p.setEncounterId(req.getEncounterId());
+        p.setEncounterId(getOrCreateTodayEncounter(req.getPatientId(), doctorProfileId));
         p.setPatientId(req.getPatientId());
         p.setDoctorId(doctorProfileId);
         p.setStatus(PrescriptionStatus.ACTIVE);
@@ -261,7 +294,7 @@ public class DoctorService {
         assertHasFullAccess(doctorProfileId, req.getPatientId());
 
         Report r = new Report();
-        r.setEncounterId(req.getEncounterId());
+        r.setEncounterId(getOrCreateTodayEncounter(req.getPatientId(), doctorProfileId));
         r.setPatientId(req.getPatientId());
         r.setUploadedByUserId(uploadedByUserId);
         r.setReportName(req.getReportName());
@@ -269,5 +302,43 @@ public class DoctorService {
         r.setHospitalName(req.getHospitalName());
         r.setVisibility(ReportVisibility.NORMAL);
         return reportRepository.save(r);
+    }
+
+    @Transactional
+    public Appointment updateMeetingLink(Long doctorProfileId, Long appointmentId, UpdateAppointmentMeetingLinkRequest req) {
+        Appointment appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        if (!appt.getDoctorId().equals(doctorProfileId)) {
+            throw new AccessDeniedCustomException("You can only add meeting links to your own appointments.");
+        }
+        appt.setMeetingLink(req.getMeetingLink());
+        return appointmentRepository.save(appt);
+    }
+
+    @Transactional
+    public Appointment generateMeetingLink(Long doctorProfileId, Long appointmentId) {
+        Appointment appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        if (!appt.getDoctorId().equals(doctorProfileId)) {
+            throw new AccessDeniedCustomException("You can only generate meeting links for your own appointments.");
+        }
+        
+        // Generate a unique Jitsi Meet link
+        String uniqueId = java.util.UUID.randomUUID().toString();
+        String link = "https://meet.jit.si/EHR-Consult-" + uniqueId;
+        
+        appt.setMeetingLink(link);
+        return appointmentRepository.save(appt);
+    }
+
+    @Transactional
+    public Appointment deleteMeetingLink(Long doctorProfileId, Long appointmentId) {
+        Appointment appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        if (!appt.getDoctorId().equals(doctorProfileId)) {
+            throw new AccessDeniedCustomException("You can only delete meeting links for your own appointments.");
+        }
+        appt.setMeetingLink(null);
+        return appointmentRepository.save(appt);
     }
 }

@@ -3,21 +3,24 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { ToastComponent } from './shared/toast/toast.component';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent, ToastComponent],
   template: `
     <app-navbar></app-navbar>
-    <div class="app-body">
+    <div class="app-body" [ngClass]="'role-' + (auth.role || 'NONE')">
       <app-sidebar *ngIf="auth.isLoggedIn"></app-sidebar>
       <div class="main-content">
         <router-outlet></router-outlet>
       </div>
     </div>
-  `
+    <app-toast></app-toast>
+  `,
+  styles: []
 })
 export class AppComponent {
   constructor(public auth: AuthService) {}

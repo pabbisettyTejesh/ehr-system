@@ -23,37 +23,27 @@ const COLLAPSE_KEY = 'ehr_sidebar_collapsed';
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive, SafeHtmlPipe],
   template: `
-    <aside class="sidebar" [class.collapsed]="collapsed" [class]="'accent-' + roleKey()" *ngIf="groups.length">
+    <div class="mobile-backdrop" (click)="closeMobile()"></div>
+    <aside class="sidebar" [class]="'accent-' + roleKey()" *ngIf="groups.length">
       <nav>
         <ng-container *ngFor="let group of groups">
           <div class="side-group-label">{{ group.label }}</div>
           <a *ngFor="let item of group.items"
              [routerLink]="item.path"
              routerLinkActive="active"
-             [title]="collapsed ? item.label : null"
              class="side-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="item.icon | safeHtml"></svg>
             <span>{{ item.label }}</span>
           </a>
         </ng-container>
       </nav>
-      <button type="button" class="side-collapse-toggle" (click)="toggleCollapsed()" [title]="collapsed ? 'Expand' : 'Collapse'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [innerHTML]="(collapsed ? icons.chevronRight : icons.chevronLeft) | safeHtml"></svg>
-        <span>Collapse</span>
-      </button>
     </aside>
   `
 })
 export class SidebarComponent {
   icons = ICONS;
-  collapsed = localStorage.getItem(COLLAPSE_KEY) === '1';
 
   constructor(public auth: AuthService) {}
-
-  toggleCollapsed() {
-    this.collapsed = !this.collapsed;
-    localStorage.setItem(COLLAPSE_KEY, this.collapsed ? '1' : '0');
-  }
 
   roleKey(): string {
     switch (this.auth.role) {
@@ -142,6 +132,10 @@ export class SidebarComponent {
       ]
     }
   ];
+
+  closeMobile() {
+    document.body.classList.remove('sidebar-open');
+  }
 
   get groups(): NavGroup[] {
     switch (this.auth.role) {

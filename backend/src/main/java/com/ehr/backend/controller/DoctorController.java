@@ -68,6 +68,16 @@ public class DoctorController {
         return ResponseEntity.ok(summary);
     }
 
+    @GetMapping("/patients/{patientId}/full-data")
+    public ResponseEntity<?> patientFullData(@PathVariable Long patientId, HttpServletRequest request) {
+        Long doctorId = myDoctorProfileId();
+        var fullData = doctorService.getPatientFullData(doctorId, patientId);
+        accessLogService.log(currentUserService.getUserId(), patientId, "VIEW_MEDICAL_HISTORY",
+                AccessMode.APPOINTED_DOCTOR_ACCESS, RequestUtil.getClientIp(request),
+                RequestUtil.getUserAgent(request), "Doctor viewed full patient session data");
+        return ResponseEntity.ok(fullData);
+    }
+
     @PostMapping("/encounters")
     public ResponseEntity<?> createEncounter(@RequestBody CreateEncounterRequest req, HttpServletRequest request) {
         Long doctorId = myDoctorProfileId();
@@ -131,5 +141,23 @@ public class DoctorController {
     public ResponseEntity<?> addReport(@RequestBody CreateReportRequest req) {
         Long doctorId = myDoctorProfileId();
         return ResponseEntity.ok(doctorService.addReport(doctorId, req, currentUserService.getUserId()));
+    }
+
+    @PutMapping("/appointments/{appointmentId}/meeting-link")
+    public ResponseEntity<?> updateMeetingLink(@PathVariable Long appointmentId, @RequestBody UpdateAppointmentMeetingLinkRequest req) {
+        Long doctorId = myDoctorProfileId();
+        return ResponseEntity.ok(doctorService.updateMeetingLink(doctorId, appointmentId, req));
+    }
+
+    @PostMapping("/appointments/{appointmentId}/generate-meeting")
+    public ResponseEntity<?> generateMeetingLink(@PathVariable Long appointmentId) {
+        Long doctorId = myDoctorProfileId();
+        return ResponseEntity.ok(doctorService.generateMeetingLink(doctorId, appointmentId));
+    }
+
+    @DeleteMapping("/appointments/{appointmentId}/meeting-link")
+    public ResponseEntity<?> deleteMeetingLink(@PathVariable Long appointmentId) {
+        Long doctorId = myDoctorProfileId();
+        return ResponseEntity.ok(doctorService.deleteMeetingLink(doctorId, appointmentId));
     }
 }

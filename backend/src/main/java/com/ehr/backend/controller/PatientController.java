@@ -1,6 +1,7 @@
 package com.ehr.backend.controller;
 
 import com.ehr.backend.dto.request.UpdatePatientProfileRequest;
+import com.ehr.backend.dto.request.PatientRequestAppointmentRequest;
 import com.ehr.backend.entity.PatientProfile;
 import com.ehr.backend.security.CurrentUserService;
 import com.ehr.backend.service.AccessLogService;
@@ -45,6 +46,16 @@ public class PatientController {
     @GetMapping("/appointments")
     public ResponseEntity<?> getAppointments() {
         return ResponseEntity.ok(patientService.getMyAppointments(currentProfile().getId()));
+    }
+
+    @PostMapping("/appointments/request")
+    public ResponseEntity<?> requestAppointment(@RequestBody PatientRequestAppointmentRequest req) {
+        return ResponseEntity.ok(patientService.requestAppointment(currentProfile().getId(), currentUserService.getUserId(), req));
+    }
+
+    @GetMapping("/doctors/active")
+    public ResponseEntity<?> getActiveDoctors() {
+        return ResponseEntity.ok(patientService.getActiveDoctors());
     }
 
     @GetMapping("/medical-history")

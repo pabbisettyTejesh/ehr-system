@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { ICONS } from '../../shared/icons';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DoctorApiService } from '../../core/services/doctor.service';
 import { PatientFullDataResponse } from '../../core/models/models';
@@ -13,6 +13,11 @@ import { PatientFullDataResponse } from '../../core/models/models';
   template: `
     <div class="container form-page" style="max-width: 1100px;">
       
+      <button class="btn secondary" (click)="goBack()" style="margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="m15 18-6-6 6-6"/></svg>
+        Go Back
+      </button>
+
       <!-- Loading & Error States -->
       <ng-template #loading>
         <div class="card" *ngIf="!error" style="text-align: center; padding: 48px;">
@@ -397,7 +402,12 @@ export class DoctorPatientSummaryComponent implements OnInit {
   data: PatientFullDataResponse | null = null;
   error = '';
 
-  constructor(private route: ActivatedRoute, private api: DoctorApiService, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private api: DoctorApiService,
+    private router: Router,
+    private location: Location
+  ) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('patientId'));

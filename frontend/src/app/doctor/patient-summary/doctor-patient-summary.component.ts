@@ -13,11 +13,6 @@ import { PatientFullDataResponse } from '../../core/models/models';
   template: `
     <div class="container form-page" style="max-width: 1100px;">
       
-      <button class="btn secondary" (click)="goBack()" style="margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="m15 18-6-6 6-6"/></svg>
-        Go Back
-      </button>
-
       <!-- Loading & Error States -->
       <ng-template #loading>
         <div class="card" *ngIf="!error" style="text-align: center; padding: 48px;">

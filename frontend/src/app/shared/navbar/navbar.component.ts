@@ -1,7 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { SafeHtmlPipe } from '../safe-html.pipe';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService, Notification } from '../../core/services/notification.service';
 import { ICONS } from '../icons';
@@ -21,6 +21,11 @@ import { CommandPaletteComponent } from '../command-palette/command-palette.comp
           <strong>EHR</strong><span class="brand-sub">System</span>
         </span>
       </a>
+
+      <button class="back-btn" *ngIf="showBackButton()" (click)="goBack()" title="Go Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>Back</span>
+      </button>
 
       <div class="links" *ngIf="auth.isLoggedIn">
         <button class="hamburger" (click)="toggleMobileMenu()" title="Toggle Menu">
@@ -119,6 +124,17 @@ import { CommandPaletteComponent } from '../command-palette/command-palette.comp
     .brand-text strong { font-weight: 600; }
     .brand-sub { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; color: var(--ink-soft); margin-left: 6px; }
 
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg-soft); border: 1px solid var(--line);
+      color: var(--ink); padding: 6px 12px; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.2s; margin-left: 16px; margin-right: auto;
+    }
+    .back-btn:hover { background: var(--bg); border-color: var(--ink-soft); }
+    .back-btn svg { width: 14px; height: 14px; }
+    @media (max-width: 700px) { .back-btn span { display: none; } .back-btn { padding: 8px; margin-left: 8px; } }
+
     .links { display: flex; align-items: center; gap: 20px; }
     .links a { color: var(--ink-soft); font-weight: 600; font-size: 14px; transition: color 0.2s; }
     .links a:hover { color: var(--ink); }
@@ -179,11 +195,24 @@ export class NavbarComponent {
   constructor(
     public auth: AuthService, 
     public notifService: NotificationService,
-    private router: Router
+    public router: Router,
+    private location: Location
   ) {
     if (this.auth.isLoggedIn) {
       this.loadNotifications();
     }
+  }
+
+  showBackButton(): boolean {
+    if (!this.auth.isLoggedIn) return false;
+    const path = this.router.url.split('?')[0]; // ignore query params
+    const dash = '/' + this.dashboardPath();
+    // Hide back button on the main dashboard of any role, or login page
+    return path !== dash && path !== '/' && path !== '/login';
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   loadNotifications() {

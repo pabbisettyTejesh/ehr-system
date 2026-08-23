@@ -401,6 +401,7 @@ export class DoctorPatientSummaryComponent implements OnInit {
   icons = ICONS;
   data: PatientFullDataResponse | null = null;
   error = '';
+  patientId: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -411,7 +412,16 @@ export class DoctorPatientSummaryComponent implements OnInit {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('patientId'));
-    this.api.getPatientFullData(id).subscribe({
+    if (!id) {
+      this.error = 'Invalid patient ID.';
+      return;
+    }
+    this.patientId = id;
+    this.loadData();
+  }
+
+  loadData() {
+    this.api.getPatientFullData(this.patientId).subscribe({
       next: (d) => {
         // Sort encounters by date descending
         d.encounters.sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime());
@@ -419,6 +429,10 @@ export class DoctorPatientSummaryComponent implements OnInit {
       },
       error: (err) => this.error = err?.error?.message || 'Access denied. You do not have permission to view this patient.'
     });
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   closeSession() {

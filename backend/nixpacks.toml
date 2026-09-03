@@ -2,4 +2,4 @@
 cmds = ["mvn -B -DskipTests clean package"]
 
 [start]
-cmd = "java -jar target/*.jar"
+cmd = "java -Xmx300m -Xms300m -XX:+UseSerialGC -jar target/*.jar"
